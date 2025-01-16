@@ -1,0 +1,70 @@
+.paginationWrapper {
+  width: 100%;
+}
+
+.paginationInfo {
+  font-size: 14px;
+  color: #666;
+  margin: 20px 0 10px 0;
+}
+
+.paginationMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.paginationContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.leftButtons, .rightButtons {
+  display: flex;
+  gap: 5px;
+}
+
+.middleButtons {
+    display: flex;
+    gap: 5px;
+}
+
+.paginationButton {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.paginationButton:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.paginationButton.active {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
+.paginationButton.disabled {
+  background-color: #e0e0e0;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.paginationButton.disabled:hover {
+  background-color: #e0e0e0;
+  color: #999;
+}
+
+.recordsPerPageSelect {
+  margin-left: 10px;
+  padding: 5px;
+  font-size: 14px;
+}
