@@ -51,7 +51,7 @@ describe("Pagination Component", () => {
     expect(defaultProps.paginate).toHaveBeenCalledWith(1);
 
     fireEvent.click(screen.getByText("Last"));
-    expect(defaultProps.paginate).toHaveBeenCalledWith(20); // Updated to reflect 20 pages
+    expect(defaultProps.paginate).toHaveBeenCalledWith(20);
   });
 
   it("updates records per page when dropdown value changes", () => {
