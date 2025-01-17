@@ -101,3 +101,6 @@ To install and run the project locally, follow these steps:
 
 ### Live Demo
 [https://frontend-assignment-pearl-iota.vercel.app/](https://frontend-assignment-pearl-iota.vercel.app/)
+
+### Project Walkthrough
+[Project Walkthrough 🔗](https://www.loom.com/share/72a08cd53a2a46ddbd9382007325ff41?sid=780c50a1-0e83-468a-baf2-5facac9e5fc6)
