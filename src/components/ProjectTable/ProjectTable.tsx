@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Project, SortColumn, SortDirection } from "../../types/index";
+import ProjectTableLoader from "./ProjectTableLoader.tsx";
 import styles from "./ProjectTable.module.css";
 
 interface ProjectTableProps {
@@ -8,7 +9,24 @@ interface ProjectTableProps {
   handleSort: (column: SortColumn) => void;
   sortColumn: SortColumn;
   sortDirection: SortDirection;
+  isLoading?: boolean;
 }
+
+const TableRow = React.memo(({ record }: { record: Project }) => (
+  <tr>
+    <td>{record["s.no"]}</td>
+    <td>{record["percentage.funded"]}%</td>
+    <td>${record["amt.pledged"]}</td>
+  </tr>
+));
+
+const EmptyRow = React.memo(() => (
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+));
 
 const ProjectTable: React.FC<ProjectTableProps> = ({
   records,
@@ -16,13 +34,25 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
   handleSort,
   sortColumn,
   sortDirection,
+  isLoading = false,
 }) => {
-  const getSortIcon = (column: SortColumn) => {
-    if (sortColumn !== column) return "↕️";
-    return sortDirection === "asc" ? "↑" : "↓";
-  };
+  const getSortIcon = useMemo(
+    () => (column: SortColumn) => {
+      if (sortColumn !== column) return "↕️";
+      return sortDirection === "asc" ? "↑" : "↓";
+    },
+    [sortColumn, sortDirection]
+  );
 
   const emptyRows = recordsPerPage - records.length;
+  const emptyRowsArray = useMemo(
+    () => Array.from({ length: emptyRows }),
+    [emptyRows]
+  );
+
+  if (isLoading) {
+    return <ProjectTableLoader rowsCount={recordsPerPage} />;
+  }
 
   return (
     <div className={styles.tableContainer}>
@@ -50,19 +80,11 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
           </tr>
         </thead>
         <tbody>
-          {records.map((record, index) => (
-            <tr key={index}>
-              <td>{record["s.no"]}</td>
-              <td>{record["percentage.funded"]}%</td>
-              <td>${record["amt.pledged"]}</td>
-            </tr>
+          {records.map((record) => (
+            <TableRow key={record["s.no"]} record={record} />
           ))}
-          {Array.from({ length: emptyRows }).map((_, index) => (
-            <tr key={`empty-${index}`}>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-              <td>&nbsp;</td>
-            </tr>
+          {emptyRowsArray.map((_, index) => (
+            <EmptyRow key={`empty-${index}`} />
           ))}
         </tbody>
       </table>
@@ -70,4 +92,4 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
   );
 };
 
-export default ProjectTable;
+export default React.memo(ProjectTable);

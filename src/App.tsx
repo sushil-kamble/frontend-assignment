@@ -1,42 +1,67 @@
-import React from "react";
-import { useEffect, useState, useMemo } from "react";
-import { Project, SortColumn } from "./types/index";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
+import { Project, SortColumn, SortDirection } from "./types/index";
 import ProjectTable from "./components/ProjectTable/ProjectTable.tsx";
 import Pagination from "./components/Pagination/Pagination.tsx";
 import styles from "./App.module.css";
 
 function App() {
   const [data, setData] = useState<Project[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [recordsPerPage, setRecordsPerPage] = useState<number>(5);
-  const [sortColumn, setSortColumn] = useState<
-    "s.no" | "percentage.funded" | "amt.pledged"
-  >("s.no");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [sortColumn, setSortColumn] = useState<SortColumn>("s.no");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
 
   useEffect(() => {
-    fetch(
-      "https://raw.githubusercontent.com/saaslabsco/frontend-assignment/refs/heads/master/frontend-assignment.json"
-    )
-      .then((response) => response.json())
-      .then((data) => setData(data));
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        setError(null); // Reset error state before fetching
+        const response = await fetch(
+          "https://raw.githubusercontent.com/saaslabsco/frontend-assignment/refs/heads/master/frontend-assignment.json"
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            `${response.status}: Failed to fetch data, Please try again later`
+          );
+        }
+
+        const jsonData = await response.json();
+        setData(jsonData);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+        setData([]); // Reset data on error
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
   }, []);
 
-  const handleSort = (column: SortColumn) => {
-    if (sortColumn === column) {
-      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
-    } else {
-      setSortColumn(column);
-      setSortDirection("asc");
-    }
-  };
+  const handleSort = useCallback(
+    (column: SortColumn) => {
+      if (sortColumn === column) {
+        setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
+      } else {
+        setSortColumn(column);
+        setSortDirection("asc");
+      }
+      setCurrentPage(1);
+      const url = new URL(window.location.href);
+      url.searchParams.set("page", "1");
+      window.history.pushState({}, "", url.toString());
+    },
+    [sortColumn]
+  );
 
   const sortedData = useMemo(() => {
     return [...data].sort((a, b) => {
-      const multiplier = sortDirection === "asc" ? 1 : -1;
+      const dir = sortDirection === "asc" ? 1 : -1;
       const aValue = a[sortColumn];
       const bValue = b[sortColumn];
-      return aValue > bValue ? multiplier : -multiplier;
+      return aValue > bValue ? dir : -dir;
     });
   }, [data, sortColumn, sortDirection]);
 
@@ -54,22 +79,29 @@ function App() {
       </header>
 
       <main className={styles.main}>
-        <ProjectTable
-          records={currentRecords}
-          recordsPerPage={recordsPerPage}
-          handleSort={handleSort}
-          sortColumn={sortColumn}
-          sortDirection={sortDirection}
-        />
-        <Pagination
-          totalRecords={data.length}
-          recordsPerPage={recordsPerPage}
-          currentPage={currentPage}
-          paginate={setCurrentPage}
-          sortColumn={sortColumn}
-          sortDirection={sortDirection}
-          setRecordsPerPage={setRecordsPerPage}
-        />
+        {error ? (
+          <div className={styles.error}>
+            <p>{error}</p>
+          </div>
+        ) : (
+          <>
+            <ProjectTable
+              records={currentRecords}
+              recordsPerPage={recordsPerPage}
+              handleSort={handleSort}
+              sortColumn={sortColumn}
+              sortDirection={sortDirection}
+              isLoading={isLoading}
+            />
+            <Pagination
+              totalRecords={data.length}
+              recordsPerPage={recordsPerPage}
+              currentPage={currentPage}
+              paginate={setCurrentPage}
+              setRecordsPerPage={setRecordsPerPage}
+            />
+          </>
+        )}
       </main>
 
       <footer className={styles.footer}>
@@ -79,4 +111,4 @@ function App() {
   );
 }
 
-export default App;
+export default React.memo(App);

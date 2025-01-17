@@ -1,6 +1,5 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback, useMemo } from "react";
 import styles from "./Pagination.module.css"; // Import the CSS module
-import { SortColumn, SortDirection } from "../../types";
 
 interface PaginationProps {
   totalRecords: number;
@@ -8,8 +7,6 @@ interface PaginationProps {
   currentPage: number;
   paginate: (pageNumber: number) => void;
   setRecordsPerPage: (recordsPerPage: number) => void;
-  sortColumn: SortColumn;
-  sortDirection: SortDirection;
 }
 
 const Pagination: React.FC<PaginationProps> = ({
@@ -18,53 +15,56 @@ const Pagination: React.FC<PaginationProps> = ({
   currentPage,
   paginate,
   setRecordsPerPage,
-  sortColumn,
-  sortDirection,
 }) => {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const pageParam = parseInt(params.get("page") || "1");
+    const sizeParam = parseInt(params.get("size") || recordsPerPage.toString());
 
     if (pageParam !== currentPage) {
       paginate(pageParam);
     }
+    if (sizeParam !== recordsPerPage) {
+      setRecordsPerPage(sizeParam);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    paginate(1);
-    updateURLParams(1, recordsPerPage);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortColumn, sortDirection]);
-
-  const updateURLParams = (page: number, size: number) => {
+  const updateURLParams = useCallback((page: number, size: number) => {
     const url = new URL(window.location.href);
     url.searchParams.set("page", page.toString());
+    url.searchParams.set("size", size.toString());
     window.history.pushState({}, "", url.toString());
-  };
+  }, []);
 
-  const pageNumbers: number[] = [];
-  const totalPages = Math.ceil(totalRecords / recordsPerPage);
-  const startPage = Math.max(currentPage - 3, 1);
-  const endPage = Math.min(currentPage + 3, totalPages);
+  const { pageNumbers, totalPages } = useMemo(() => {
+    const totalPages = Math.ceil(totalRecords / recordsPerPage);
+    const startPage = Math.max(currentPage - 3, 1);
+    const endPage = Math.min(currentPage + 3, totalPages);
+    const pageNumbers = Array.from(
+      { length: endPage - startPage + 1 },
+      (_, i) => startPage + i
+    );
+    return { pageNumbers, totalPages };
+  }, [totalRecords, recordsPerPage, currentPage]);
 
-  for (let i = startPage; i <= endPage; i++) {
-    pageNumbers.push(i);
-  }
+  const handleRecordsPerPageChange = useCallback(
+    (event: React.ChangeEvent<HTMLSelectElement>) => {
+      const newSize = Number(event.target.value);
+      setRecordsPerPage(newSize);
+      paginate(1);
+      updateURLParams(1, newSize);
+    },
+    [setRecordsPerPage, paginate, updateURLParams]
+  );
 
-  const handleRecordsPerPageChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const newSize = Number(event.target.value);
-    setRecordsPerPage(newSize);
-    paginate(1);
-    updateURLParams(1, newSize);
-  };
-
-  const handlePaginate = (pageNumber: number) => {
-    paginate(pageNumber);
-    updateURLParams(pageNumber, recordsPerPage);
-  };
+  const handlePaginate = useCallback(
+    (pageNumber: number) => {
+      paginate(pageNumber);
+      updateURLParams(pageNumber, recordsPerPage);
+    },
+    [paginate, updateURLParams, recordsPerPage]
+  );
 
   return (
     <div className={styles.paginationWrapper}>
@@ -76,6 +76,7 @@ const Pagination: React.FC<PaginationProps> = ({
         <select
           className={styles.recordsPerPageSelect}
           onChange={handleRecordsPerPageChange}
+          value={recordsPerPage}
         >
           <option value={5}>5</option>
           <option value={10}>10</option>
@@ -144,4 +145,4 @@ const Pagination: React.FC<PaginationProps> = ({
   );
 };
 
-export default Pagination;
+export default React.memo(Pagination);
