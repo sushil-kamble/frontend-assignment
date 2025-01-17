@@ -28,6 +28,9 @@ function App() {
           );
         }
 
+        // Delay to show loading state
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
         const jsonData = await response.json();
         setData(jsonData);
       } catch (err) {
