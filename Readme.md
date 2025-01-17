@@ -49,3 +49,55 @@ Use the web API (link : https://raw.githubusercontent.com/saaslabsco/frontend-as
 
 1. Result on platforms like codesandbox, replit are not accepted. 
 1. Private unaccessible links will lead to rejection.
+
+
+## Solution
+### Installation
+
+To install and run the project locally, follow these steps:
+
+1. Clone the repository:
+    ```sh
+    git clone https://github.com/your-username/fe-assignment.git
+    ```
+2. Navigate to the project directory:
+    ```sh
+    cd fe-assignment
+    ```
+3. Install the dependencies:
+    ```sh
+    npm install
+    ```
+4. Start the development server:
+    ```sh
+    npm run start
+    ```
+5. Test the application:
+    ```sh
+    npm run test
+    ```
+
+### Features
+
+- Fetch and display highly-rated Kickstarter projects.
+- Display project details in a table format.
+- Industry level Pagination with a maximum of 5 records per page with a option to show 10/15/20 record.
+- Sorting functionality for table columns.
+- Persistent state for pagination and sorting, even after page refresh. (by using url query params).
+- Error handling for failed API requests.
+- Responsive and aesthetically pleasing UI.
+- Unit tests for key components.
+
+### Technologies Used
+
+- **React 19**: A JavaScript library for building user interfaces.
+- **TypeScript**: A typed superset of JavaScript that compiles to plain JavaScript.
+- **Jest**: JavaScript testing framework with a focus on simplicity.
+- **React Testing Library**: A library for testing React components.
+- **CSS Modules**: A CSS file in which all class and animation names are scoped locally by default.
+- **Fetch API**: A modern interface for making HTTP requests in the browser.
+- **Create React App**: A comfortable environment for learning React and a best practice for building a single-page application.
+- **Vercel**: Platform for deploying web applications.
+
+### Live Demo
+[https://frontend-assignment-pearl-iota.vercel.app/](https://frontend-assignment-pearl-iota.vercel.app/)

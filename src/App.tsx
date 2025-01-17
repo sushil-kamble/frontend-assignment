@@ -42,32 +42,42 @@ function App() {
 
   useEffect(() => {
     // get state from url for page, size, sortColumn and sortDirection
-    const params = new URLSearchParams(window.location.search);
-    const pageParam = parseInt(params.get("page") || "1");
-    const sizeParam = parseInt(params.get("size") || recordsPerPage.toString());
-    const sortColumnParam = params.get("sortColumn") as SortColumn;
-    const sortDirectionParam = params.get("sortDirection") as SortDirection;
+    const url = new URL(window.location.href);
+    const params = url.searchParams;
+    const pageParam = Number(params.get("page")) || 1;
+    const sizeParam = Number(params.get("size")) || 5;
+    const sortColumnParam = (params.get("sortColumn") || "s.no") as SortColumn;
+    const sortDirectionParam = (params.get("sortDirection") ||
+      "asc") as SortDirection;
 
-    if (pageParam !== currentPage) {
-      setCurrentPage(pageParam);
-    }
-    if (sizeParam !== recordsPerPage) {
-      setRecordsPerPage(sizeParam);
-    }
-    if (sortColumnParam && sortColumnParam !== sortColumn) {
-      setSortColumn(sortColumnParam);
-    }
-    if (sortDirectionParam && sortDirectionParam !== sortDirection) {
-      setSortDirection(sortDirectionParam);
-    }
+    setCurrentPage(pageParam);
+    setRecordsPerPage(sizeParam);
+    setSortColumn(sortColumnParam);
+    setSortDirection(sortDirectionParam);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     const url = new URL(window.location.href);
-    url.searchParams.set("sortColumn", sortColumn);
-    url.searchParams.set("sortDirection", sortDirection);
+    const pageParam = url.searchParams.get("page");
+    const sizeParam = url.searchParams.get("size");
+    const sortColumn = url.searchParams.get("sortColumn");
+    const sortDirection = url.searchParams.get("sortDirection");
+    if (!pageParam) {
+      url.searchParams.set("page", "1");
+    }
+    if (!sizeParam) {
+      url.searchParams.set("size", recordsPerPage.toString());
+    }
+    if (!sortColumn) {
+      url.searchParams.set("sortColumn", "s.no");
+    }
+    if (!sortDirection) {
+      url.searchParams.set("sortDirection", "asc");
+    }
     window.history.pushState({}, "", url.toString());
-  }, [sortColumn, sortDirection]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSort = useCallback(
     (column: SortColumn) => {
