@@ -59,22 +59,13 @@ const ProjectTable: React.FC<ProjectTableProps> = ({
       <table className={styles.table}>
         <thead>
           <tr>
-            <th
-              onClick={() => handleSort("s.no")}
-              style={{ cursor: "pointer" }}
-            >
+            <th onClick={() => handleSort("s.no")}>
               S.No {getSortIcon("s.no")}
             </th>
-            <th
-              onClick={() => handleSort("percentage.funded")}
-              style={{ cursor: "pointer" }}
-            >
+            <th onClick={() => handleSort("percentage.funded")}>
               Percentage Funded {getSortIcon("percentage.funded")}
             </th>
-            <th
-              onClick={() => handleSort("amt.pledged")}
-              style={{ cursor: "pointer" }}
-            >
+            <th onClick={() => handleSort("amt.pledged")}>
               Amount Pledged {getSortIcon("amt.pledged")}
             </th>
           </tr>

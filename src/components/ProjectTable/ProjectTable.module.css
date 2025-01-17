@@ -17,6 +17,7 @@
 }
 
 .table th {
+  cursor: pointer;
   background-color: #f2f2f2;
   user-select: none;
   transition: background-color 0.2s;
