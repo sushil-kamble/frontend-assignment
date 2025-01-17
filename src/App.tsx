@@ -40,6 +40,35 @@ function App() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    // get state from url for page, size, sortColumn and sortDirection
+    const params = new URLSearchParams(window.location.search);
+    const pageParam = parseInt(params.get("page") || "1");
+    const sizeParam = parseInt(params.get("size") || recordsPerPage.toString());
+    const sortColumnParam = params.get("sortColumn") as SortColumn;
+    const sortDirectionParam = params.get("sortDirection") as SortDirection;
+
+    if (pageParam !== currentPage) {
+      setCurrentPage(pageParam);
+    }
+    if (sizeParam !== recordsPerPage) {
+      setRecordsPerPage(sizeParam);
+    }
+    if (sortColumnParam && sortColumnParam !== sortColumn) {
+      setSortColumn(sortColumnParam);
+    }
+    if (sortDirectionParam && sortDirectionParam !== sortDirection) {
+      setSortDirection(sortDirectionParam);
+    }
+  }, []);
+
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    url.searchParams.set("sortColumn", sortColumn);
+    url.searchParams.set("sortDirection", sortDirection);
+    window.history.pushState({}, "", url.toString());
+  }, [sortColumn, sortDirection]);
+
   const handleSort = useCallback(
     (column: SortColumn) => {
       if (sortColumn === column) {
@@ -51,9 +80,14 @@ function App() {
       setCurrentPage(1);
       const url = new URL(window.location.href);
       url.searchParams.set("page", "1");
+      url.searchParams.set("sortColumn", column);
+      url.searchParams.set(
+        "sortDirection",
+        sortDirection === "asc" ? "desc" : "asc"
+      );
       window.history.pushState({}, "", url.toString());
     },
-    [sortColumn]
+    [sortColumn, sortDirection]
   );
 
   const sortedData = useMemo(() => {

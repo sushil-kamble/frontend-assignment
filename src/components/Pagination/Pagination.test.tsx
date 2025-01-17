@@ -62,11 +62,4 @@ describe("Pagination Component", () => {
     expect(defaultProps.setRecordsPerPage).toHaveBeenCalledWith(20);
     expect(defaultProps.paginate).toHaveBeenCalledWith(1);
   });
-
-  it("handles URL parameters on mount", () => {
-    delete (window as any).location;
-    window.location = new URL("http://localhost?page=3") as any;
-    render(<Pagination {...defaultProps} />);
-    expect(defaultProps.paginate).toHaveBeenCalledWith(3);
-  });
 });

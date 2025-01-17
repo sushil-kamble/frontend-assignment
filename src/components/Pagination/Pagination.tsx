@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import styles from "./Pagination.module.css"; // Import the CSS module
 
 interface PaginationProps {
@@ -16,20 +16,6 @@ const Pagination: React.FC<PaginationProps> = ({
   paginate,
   setRecordsPerPage,
 }) => {
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const pageParam = parseInt(params.get("page") || "1");
-    const sizeParam = parseInt(params.get("size") || recordsPerPage.toString());
-
-    if (pageParam !== currentPage) {
-      paginate(pageParam);
-    }
-    if (sizeParam !== recordsPerPage) {
-      setRecordsPerPage(sizeParam);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const updateURLParams = useCallback((page: number, size: number) => {
     const url = new URL(window.location.href);
     url.searchParams.set("page", page.toString());

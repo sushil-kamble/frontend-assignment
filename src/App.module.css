@@ -23,7 +23,8 @@
 }
 
 .main {
-  width: 1200px;
+  width: 100%;
+  padding: 20px;
   margin: 0 auto;
   flex-grow: 1;
   display: flex;
@@ -41,12 +42,13 @@
   align-items: center;
 }
 
-@media (min-width: 769px) {
+@media (min-width: 1256px) {
   .container {
     padding: 20px;
   }
 
   .main {
+    width: 1200px;
     padding: 20px 0;
   }
 }

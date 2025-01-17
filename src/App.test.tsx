@@ -79,7 +79,7 @@ describe("App Component", () => {
 
     // Wait for URL update
     await waitFor(() => {
-      expect(mockPushState).toHaveBeenCalledTimes(1);
+      expect(mockPushState).toHaveBeenCalledTimes(2);
       expect(mockPushState).toHaveBeenCalledWith(
         {},
         "",
