@@ -62,7 +62,7 @@ To install and run the project locally, follow these steps:
     ```
 2. Navigate to the project directory:
     ```sh
-    cd fe-assignment
+    cd frontend-assignment
     ```
 3. Install the dependencies:
     ```sh
